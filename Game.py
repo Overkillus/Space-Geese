@@ -13,6 +13,7 @@ class Game:
     player_art = pygame.image.load("Art/spaceship1.png")
     player_art = pygame.transform.scale(player_art, (player_art.get_width()//2, player_art.get_height()//2))
     background_art = pygame.image.load("Art/bg.png")
+    game_over_art = pygame.image.load("Art/bonk.jpg")
 
     def __init__(self):
         # Screen
@@ -20,6 +21,10 @@ class Game:
         # Clock
         self.clock = pygame.time.Clock()
         self.delta_time = 0
+        # Banners
+        self.game_over_rect = self.game_over_art.get_rect(center=(self.screen.get_width()/2,self.screen.get_height()/2))
+        # Other
+        self.is_game_over = False
 
         # Enemies
         self.is_enemy_going_right = True
@@ -78,8 +83,9 @@ class Game:
             if x < self.goose_art.get_width()/2 or x > self.screen.get_width()-self.goose_art.get_width()/2:
                 is_swap = True
             # Check for collision
-            if e.colliderect(self.player1_rect):
-                ...
+            # if e.colliderect(self.player1_rect):
+            #     print("y")
+            #     self.is_game_over = True
 
         if is_swap: # Perform a move down and swap direction
             for e in self.enemies:
@@ -105,6 +111,10 @@ class Game:
 
         # Player
         self.screen.blit(self.player_art, self.player1_rect)
+
+        # Banner
+        if self.is_game_over:
+            self.screen.blit(self.game_over_art, self.game_over_rect)
 
         # Show new frame
         pygame.display.flip()
