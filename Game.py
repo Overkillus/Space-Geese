@@ -3,6 +3,7 @@ import pygame
 from pygame import mixer
 
 import poem_generator
+import random
 
 pygame.init()
 
@@ -47,9 +48,7 @@ class Game:
         nr_in_row = 8
         self.enemies = []
         self.projectiles = []
-        self.letters = []
 
-        self.poem = poem_generator.get_poem()
 
         for i in range(nr):
             enemy_rect = self.goose_art_2.get_rect()
@@ -67,6 +66,24 @@ class Game:
         self.player2_rect = self.player_art.get_rect()
         self.player2_x = self.screen.get_width() / 2
         self.player2_y = self.screen.get_height() - 250
+
+        # Letters
+
+        self.letters = [] # [text_object_ text_rect, letter (char), [nr_line, char_index]]
+        self.poem = poem_generator.get_poem()
+        self.is_letter_revealed = []
+        self.all_letters = []
+
+        for line in self.poem:
+            l1 = []
+            l2 = []
+            for c in line:
+                l1.append(c)
+                l2.append(False)
+            self.all_letters.append(l1)
+            self.is_letter_revealed.append(l2)
+        print(self.all_letters)
+        print(self.is_letter_revealed)
 
     def tick(self):
         self.delta_time += self.clock.tick() / 1000.0
@@ -129,21 +146,32 @@ class Game:
                     e.center = (x, y)
             self.is_enemy_going_right = not self.is_enemy_going_right
 
-        for p in self.projectiles:
+        # Move projectiles down
+        for p in self.projectiles: 
             x = p.center[0]
             y = p.center[1]
             y -= 3
             p.center = (x, y)
+            # handle collisions 
             for i, e in enumerate(self.enemies):
                 if e and p.colliderect(e):
                     self.projectiles.remove(p)
                     self.enemies[i] = None
-                    text_object_rect = get_text_rect("A", (255,0,0), e.center[0], e.center[1])
+
+                    # spawn letter on hit
+                    random_letter = self.get_random_letter()
+                    text_object_rect = get_text_rect(random_letter, (255,0,0), e.center[0], e.center[1])
+                    text_object_rect.append(random_letter[0])
+                    text_object_rect.append(random_letter[1])
                     self.letters.append(text_object_rect)
                     break
-
+        
+        # Move the letters down 
         for l in self.letters:
             l[1].center = (l[1].center[0], l[1].center[1]+3)
+            # Reveal if at the bottom
+            if l[1].center[1] >= self.screen.get_height()-200:
+                self.is_letter_revealed[l[3][0]][l[3][1]] = True
 
     def render(self):
         # Clear screen
@@ -185,6 +213,13 @@ class Game:
         # Show new frame
         pygame.display.flip()
 
+    def get_random_letter(self):
+        i = random.randint(0,2)
+        print(i)
+        index = random.randint(0, len(self.all_letters[i])-1)
+        if self.all_letters[i][index] != " " and self.is_letter_revealed[i][index] == False :
+            return [self.all_letters[i][index], [i, index]]
+        return self.get_random_letter()
 
 # Helper Function
 def get_text_rect(text, color, x, y):
@@ -193,4 +228,5 @@ def get_text_rect(text, color, x, y):
     text_rect = text_object.get_rect()
     text_rect.center = (x, y)
     return [text_object, text_rect]
+
 
