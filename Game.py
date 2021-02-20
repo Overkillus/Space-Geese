@@ -19,13 +19,12 @@ class Game:
     goose_art_3 = pygame.transform.scale(goose_art_3, (x, x))
     goose_art_4 = pygame.image.load("Art/goose4.png")
     goose_art_4 = pygame.transform.scale(goose_art_4, (x, x))
-
-    projectile_art = pygame.image.load("Art/goose2.png")
-
+    projectile_art = pygame.image.load("Art/laser_pink.png")
     player_art_moving = pygame.image.load("Art/spaceship1.png")
     player_art_moving = pygame.transform.scale(player_art_moving, (player_art_moving.get_width()//2, player_art_moving.get_height()//2))
-    player_art = pygame.image.load("Art/spaceship1.png")
-    player_art = pygame.transform.scale(player_art, (player_art.get_width()//2, player_art.get_height()//2))
+    player_art_stationary = pygame.image.load("Art/spaceship1-no-flame.png")
+    player_art_stationary = pygame.transform.scale(player_art_stationary, (player_art_stationary.get_width()//2, player_art_stationary.get_height()//2))
+    player_art = player_art_stationary
     background_art = pygame.image.load("Art/bg.png")
     game_over_art = pygame.image.load("Art/bonk.jpg")
 
@@ -42,22 +41,25 @@ class Game:
         # Music
         mixer.music.load('Sound/goose_sandstorm.mp3')
         mixer.music.play(-1)
-        mixer.music.set_volume(0.1)
+        mixer.music.set_volume(0.08)
         # Other
         self.is_game_over = False
 
         # Enemies
         self.is_enemy_going_right = True
-        nr = 24
-        nr_in_row = 8
+        nr = 100
+        nr_in_row = 10
         self.enemies = []
         self.projectiles = []
         for i in range(nr):
             enemy_rect = self.goose_art_2.get_rect()
             x = (i % nr_in_row) * (1.5 * self.goose_art_2.get_width()) + self.goose_art_2.get_width() / 2
-            y = (i //nr_in_row) * (1.5 * self.goose_art_2.get_height()) + self.goose_art_2.get_height() / 2
+            y = (i //nr_in_row) * (1.5 * self.goose_art_2.get_height()) + self.goose_art_2.get_height() / 2 - (self.goose_art_2.get_height()*1.5*(nr_in_row-2))
             enemy_rect.center = (x, y)
             self.enemies.append(enemy_rect)
+
+        # Speech Bubbles #TODO
+        self.bubbles = []
 
         # Player 1
         self.player1_rect = self.player_art.get_rect()
@@ -70,7 +72,6 @@ class Game:
         self.player2_y = self.screen.get_height() - 250
 
         # Letters
-
         self.letters = [] # [text_object_ text_rect, letter (char), [nr_line, char_index]]
         self.poem = poem_generator.get_poem()
         self.is_letter_revealed = []
@@ -119,11 +120,14 @@ class Game:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a] and self.player1_x > self.player1_rect.width/2:
             self.player1_x -= 5
-        if keys[pygame.K_d] and self.player1_x < self.screen.get_width() - self.player1_rect.width/2:
+            self.player_art = self.player_art_moving
+        elif keys[pygame.K_d] and self.player1_x < self.screen.get_width() - self.player1_rect.width/2:
             self.player1_x += 5
+            self.player_art = self.player_art_moving
+        else:
+            self.player_art = self.player_art_stationary
 
     def update(self):
-
         # Player
         self.player1_rect.center = (self.player1_x, self.player1_y)
 
@@ -158,7 +162,7 @@ class Game:
         for p in self.projectiles:
             x = p.center[0]
             y = p.center[1]
-            y -= 3
+            y -= 5
             p.center = (x, y)
             # handle collisions
             for i, e in enumerate(self.enemies):
@@ -202,7 +206,8 @@ class Game:
 
         # Projectile
         for p in self.projectiles:
-            self.screen.blit(self.goose_art_2, p)
+            self.screen.blit(self.projectile_art, p)
+
 
         # Letter
         for l in self.letters:
