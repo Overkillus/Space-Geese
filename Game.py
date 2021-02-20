@@ -7,9 +7,16 @@ pygame.init()
 
 class Game:
     # Art
-    goose_art = pygame.image.load("Art/goose2.png")
-    x = int((goose_art.get_width()) // 2)
-    goose_art = pygame.transform.scale(goose_art, (x, x))
+    goose_art_1 = pygame.image.load("Art/goose1.png")
+    x = int((goose_art_1.get_width()) // 2)
+    goose_art_1 = pygame.transform.scale(goose_art_1, (x, x))
+    goose_art_2 = pygame.image.load("Art/goose2.png")
+    goose_art_2 = pygame.transform.scale(goose_art_2, (x, x))
+    goose_art_3 = pygame.image.load("Art/goose3.png")
+    goose_art_3 = pygame.transform.scale(goose_art_3, (x, x))
+    goose_art_4 = pygame.image.load("Art/goose4.png")
+    goose_art_4 = pygame.transform.scale(goose_art_4, (x, x))
+
     player_art_moving = pygame.image.load("Art/spaceship1.png")
     player_art_moving = pygame.transform.scale(player_art_moving, (player_art_moving.get_width()//2, player_art_moving.get_height()//2))
     player_art = pygame.image.load("Art/spaceship1.png")
@@ -36,9 +43,9 @@ class Game:
         nr_in_row = 8
         self.enemies = []
         for i in range(nr):
-            enemy_rect = self.goose_art.get_rect()
-            x = (i % nr_in_row) * (1.5*self.goose_art.get_width()) + self.goose_art.get_width()/2
-            y = (i //nr_in_row) * (1.5*self.goose_art.get_height()) + self.goose_art.get_height()/2
+            enemy_rect = self.goose_art_2.get_rect()
+            x = (i % nr_in_row) * (1.5 * self.goose_art_2.get_width()) + self.goose_art_2.get_width() / 2
+            y = (i //nr_in_row) * (1.5 * self.goose_art_2.get_height()) + self.goose_art_2.get_height() / 2
             enemy_rect.center = (x, y)
             self.enemies.append(enemy_rect)
 
@@ -93,7 +100,7 @@ class Game:
                 x -= 1
             e.center = (x, y)
             # Check if swap needed (boundary)
-            if x < self.goose_art.get_width()/2 or x > self.screen.get_width()-self.goose_art.get_width()/2:
+            if x < self.goose_art_2.get_width()/2 or x > self.screen.get_width()-self.goose_art_2.get_width()/2:
                 is_swap = True
             # Check for collision
             if e.colliderect(self.player1_rect):
@@ -103,7 +110,7 @@ class Game:
             for e in self.enemies:
                 x = e.center[0]
                 y = e.center[1]
-                y += 1.5*self.goose_art.get_height()
+                y += 1.5*self.goose_art_2.get_height()
                 e.center = (x, y)
             self.is_enemy_going_right = not self.is_enemy_going_right
 
@@ -115,8 +122,16 @@ class Game:
         self.screen.blit(self.background_art, (0, 0))
 
         # Enemy
-        for e in self.enemies:
-            self.screen.blit(self.goose_art, e)
+        for i, e in enumerate(self.enemies):
+            if i % 5 == 0:
+                self.screen.blit(self.goose_art_4, e)
+            elif i % 6 == 0:
+                self.screen.blit(self.goose_art_3, e)
+            elif i % 3 == 0:
+                self.screen.blit(self.goose_art_2, e)
+            else:
+                self.screen.blit(self.goose_art_1, e)
+
 
         # Player
         self.screen.blit(self.player_art, self.player1_rect)
