@@ -160,7 +160,7 @@ class Game:
 
                     # spawn letter on hit
                     random_letter = self.get_random_letter()
-                    text_object_rect = get_text_rect(random_letter, (255,0,0), e.center[0], e.center[1])
+                    text_object_rect = get_text_rect(random_letter[0], (255,0,0), e.center[0], e.center[1])
                     text_object_rect.append(random_letter[0])
                     text_object_rect.append(random_letter[1])
                     self.letters.append(text_object_rect)
