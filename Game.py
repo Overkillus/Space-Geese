@@ -2,6 +2,8 @@ import sys
 import pygame
 from pygame import mixer
 
+import poem_generator
+
 pygame.init()
 
 
@@ -45,6 +47,10 @@ class Game:
         nr_in_row = 8
         self.enemies = []
         self.projectiles = []
+        self.letters = []
+
+        self.poem = poem_generator.get_poem()
+
         for i in range(nr):
             enemy_rect = self.goose_art_2.get_rect()
             x = (i % nr_in_row) * (1.5 * self.goose_art_2.get_width()) + self.goose_art_2.get_width() / 2
@@ -132,9 +138,12 @@ class Game:
                 if e and p.colliderect(e):
                     self.projectiles.remove(p)
                     self.enemies[i] = None
+                    text_object_rect = get_text_rect("A", (255,0,0), e.center[0], e.center[1])
+                    self.letters.append(text_object_rect)
                     break
 
-
+        for l in self.letters:
+            l[1].center = (l[1].center[0], l[1].center[1]+3)
 
     def render(self):
         # Clear screen
@@ -158,6 +167,10 @@ class Game:
         # Projectile
         for p in self.projectiles:
             self.screen.blit(self.goose_art_2, p)
+
+        # Letter
+        for l in self.letters:
+            self.screen.blit(l[0], l[1])
         # Player
         self.screen.blit(self.player_art, self.player1_rect)
 
@@ -165,13 +178,19 @@ class Game:
         if self.is_game_over:
             self.screen.blit(self.game_over_art, self.game_over_rect)
 
+        # Poem
+        for i, line in enumerate(self.poem):
+            tr = get_text_rect(line, (255,255,255), self.screen.get_width()/2, (self.screen.get_height()-200/3*(3-i)))
+            self.screen.blit(tr[0], tr[1])
         # Show new frame
         pygame.display.flip()
 
 
 # Helper Function
-def draw_text(text, font, color, surface, x, y):
+def get_text_rect(text, color, x, y):
+    font = pygame.font.SysFont("Comic Sans MS", 40, bold=True)
     text_object = font.render(text, 1, color)
     text_rect = text_object.get_rect()
-    text_rect.topleft = (x, y)
-    surface.blit(text_object, text_rect)
+    text_rect.center = (x, y)
+    return [text_object, text_rect]
+
