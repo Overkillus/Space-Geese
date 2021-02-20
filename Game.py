@@ -26,8 +26,8 @@ class Game:
     def tick(self):
         self.event_handler()
         self.delta_time += self.clock.tick() / 1000.0
-        while self.delta_time > 1 / 24:
-            self.delta_time -= 1 / 24
+        while self.delta_time > 1 / 60:
+            self.delta_time -= 1 / 60
             self.update()
             self.render()
 
@@ -44,9 +44,9 @@ class Game:
         # Controls
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
-            self.player_x -= 0.002
+            self.player_x -= 0.005
         if keys[pygame.K_d]:
-            self.player_x += 0.002
+            self.player_x += 0.005
 
     def update(self):
         self.player_rect.center = (self.player_x, self.player_y)
