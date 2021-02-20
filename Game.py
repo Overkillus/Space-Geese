@@ -39,7 +39,8 @@ class Game:
         # Banners
         self.game_over_rect = self.game_over_art.get_rect(center=(self.screen.get_width()/2,self.screen.get_height()/2))
         # Music
-        mixer.music.load('Sound/goose_sandstorm.mp3')
+        # mixer.music.load('Sound/goose_sandstorm.mp3')
+        mixer.music.load('Sound/goose_sandstorm2.wav')
         mixer.music.play(-1)
         mixer.music.set_volume(0.08)
         # Other
