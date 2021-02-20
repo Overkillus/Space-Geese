@@ -10,6 +10,8 @@ class Game:
     goose_art = pygame.image.load("Art/goose2.png")
     x = int((goose_art.get_width()) // 2)
     goose_art = pygame.transform.scale(goose_art, (x, x))
+    player_art_moving = pygame.image.load("Art/spaceship1.png")
+    player_art_moving = pygame.transform.scale(player_art_moving, (player_art_moving.get_width()//2, player_art_moving.get_height()//2))
     player_art = pygame.image.load("Art/spaceship1.png")
     player_art = pygame.transform.scale(player_art, (player_art.get_width()//2, player_art.get_height()//2))
     background_art = pygame.image.load("Art/bg.png")
@@ -18,6 +20,8 @@ class Game:
     def __init__(self):
         # Screen
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        # Background
+        self.background_art = pygame.transform.scale(self.background_art, (self.screen.get_width(), self.screen.get_height()))
         # Clock
         self.clock = pygame.time.Clock()
         self.delta_time = 0
@@ -42,6 +46,11 @@ class Game:
         self.player1_rect = self.player_art.get_rect()
         self.player1_x = self.screen.get_width() / 2
         self.player1_y = self.screen.get_height() - 250
+
+        # Player 1
+        self.player2_rect = self.player_art.get_rect()
+        self.player2_x = self.screen.get_width() / 2
+        self.player2_y = self.screen.get_height() - 250
 
     def tick(self):
         self.delta_time += self.clock.tick() / 1000.0
@@ -69,6 +78,10 @@ class Game:
             self.player1_x += 5
 
     def update(self):
+
+        # Player
+        self.player1_rect.center = (self.player1_x, self.player1_y)
+
         # Enemy
         is_swap = False
         for e in self.enemies: # Move all left/right (and check for player collision)
@@ -83,9 +96,8 @@ class Game:
             if x < self.goose_art.get_width()/2 or x > self.screen.get_width()-self.goose_art.get_width()/2:
                 is_swap = True
             # Check for collision
-            # if e.colliderect(self.player1_rect):
-            #     print("y")
-            #     self.is_game_over = True
+            if e.colliderect(self.player1_rect):
+                self.is_game_over = True
 
         if is_swap: # Perform a move down and swap direction
             for e in self.enemies:
@@ -94,9 +106,6 @@ class Game:
                 y += 1.5*self.goose_art.get_height()
                 e.center = (x, y)
             self.is_enemy_going_right = not self.is_enemy_going_right
-
-        # Player
-        self.player1_rect.center = (self.player1_x, self.player1_y)
 
     def render(self):
         # Clear screen
