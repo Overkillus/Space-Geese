@@ -7,8 +7,9 @@ pygame.init()
 
 class Game:
     # Art
-    goose_art = pygame.image.load("Goose.png")
-    player_art = pygame.image.load("Goose.png")
+    goose_art = pygame.image.load("Art/Goose.png")
+    player_art = pygame.image.load("Art/spaceship1.png")
+    background_art = pygame.image.load("Art/bg.png")
 
     def __init__(self):
         # Screen
@@ -53,6 +54,9 @@ class Game:
     def render(self):
         # Clear screen
         self.screen.fill((0, 0, 0))
+
+        # Background
+        self.screen.blit(self.background_art, (0, 0))
 
         # Player
         self.screen.blit(self.player_art, self.player_rect)
