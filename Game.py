@@ -7,15 +7,20 @@ pygame.init()
 
 class Game:
     # Art
-    # <LOAD HERE>
+    goose_art = pygame.image.load("Goose.png")
+    player_art = pygame.image.load("Goose.png")
 
     def __init__(self):
         # Screen
-        # self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        self.screen = pygame.display.set_mode((900, 600), pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         # Clock
         self.clock = pygame.time.Clock()
         self.delta_time = 0
+
+        # Player
+        self.player_rect = self.player_art.get_rect()
+        self.player_x = self.screen.get_width()/2
+        self.player_y = self.screen.get_height() - 100
 
     def tick(self):
         self.event_handler()
@@ -27,21 +32,30 @@ class Game:
 
     def event_handler(self):
         for event in pygame.event.get():
-            # print(event)
             if event.type == pygame.QUIT:
                 sys.exit(0)
-            if event.type == pygame.KEYDOWN and event.type == pygame.K_q:
-                print("test")
-                sys.exit(0)
-            elif event.type == pygame.KEYDOWN and event.type == pygame.K_ESCAPE:
-                sys.exit(0)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    sys.exit(0)
+                if event.key == pygame.K_ESCAPE:
+                    sys.exit(0)
+
+        # Controls
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a]:
+            self.player_x -= 0.002
+        if keys[pygame.K_d]:
+            self.player_x += 0.002
 
     def update(self):
-        ...
+        self.player_rect.center = (self.player_x, self.player_y)
 
     def render(self):
         # Clear screen
         self.screen.fill((0, 0, 0))
+
+        # Player
+        self.screen.blit(self.player_art, self.player_rect)
 
         # Show new frame
         pygame.display.flip()
