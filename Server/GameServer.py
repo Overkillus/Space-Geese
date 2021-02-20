@@ -3,6 +3,7 @@ import string
 
 from Server.BaseServer import Server
 
+
 class GameServer(Server):
     def __init__(self, server, port):
         self.STATUS = "running"

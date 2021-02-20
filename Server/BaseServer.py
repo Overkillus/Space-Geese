@@ -2,6 +2,7 @@ import pickle
 import socket
 import threading
 
+
 class Server:
     def __init__(self, server, port):
         self.SERVER = server

@@ -3,6 +3,7 @@ import socket
 import threading
 import time
 
+
 class Client:
     def __init__(self, server, port):
         self.SERVER = server
