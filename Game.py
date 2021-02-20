@@ -10,6 +10,8 @@ class Game:
     goose_art = pygame.image.load("Art/goose2.png")
     x = int((goose_art.get_width()) // 2)
     goose_art = pygame.transform.scale(goose_art, (x, x))
+    projectile_art = pygame.image.load("Art/goose2.png")
+    goose_art = pygame.transform.scale(goose_art, (30, 30))
     player_art = pygame.image.load("Art/spaceship1.png")
     player_art = pygame.transform.scale(player_art, (player_art.get_width()//2, player_art.get_height()//2))
     background_art = pygame.image.load("Art/bg.png")
@@ -31,6 +33,7 @@ class Game:
         nr = 24
         nr_in_row = 8
         self.enemies = []
+        self.projectiles = []
         for i in range(nr):
             enemy_rect = self.goose_art.get_rect()
             x = (i % nr_in_row) * (1.5*self.goose_art.get_width()) + self.goose_art.get_width()/2
@@ -67,6 +70,9 @@ class Game:
             self.player1_x -= 5
         if keys[pygame.K_d] and self.player1_x < self.screen.get_width() - self.player1_rect.width/2:
             self.player1_x += 5
+        if keys[pygame.K_f]:
+            projectile_rect = self.goose_art.get_rect()
+            self.projectiles.append(projectile_rect)
 
     def update(self):
         # Enemy
@@ -108,6 +114,10 @@ class Game:
         # Enemy
         for e in self.enemies:
             self.screen.blit(self.goose_art, e)
+        
+         # Projectiles
+        for p in self.projectiles:
+            self.screen.blit(self.goose_art, p)
 
         # Player
         self.screen.blit(self.player_art, self.player1_rect)
