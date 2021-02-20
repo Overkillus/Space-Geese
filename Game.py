@@ -7,8 +7,9 @@ pygame.init()
 
 class Game:
     # Art
-    goose_art = pygame.image.load("Art/Goose.png")
-    goose_art = pygame.transform.scale(goose_art, (goose_art.get_width()//5, goose_art.get_height()//5))
+    goose_art = pygame.image.load("Art/goose2.png")
+    x = int((goose_art.get_width()) // 2)
+    goose_art = pygame.transform.scale(goose_art, (x, x))
     player_art = pygame.image.load("Art/spaceship1.png")
     player_art = pygame.transform.scale(player_art, (player_art.get_width()//2, player_art.get_height()//2))
     background_art = pygame.image.load("Art/bg.png")
@@ -21,8 +22,9 @@ class Game:
         self.delta_time = 0
 
         # Enemies
-        nr = 8
-        nr_in_row = 3
+        self.is_enemy_going_right = True
+        nr = 24
+        nr_in_row = 8
         self.enemies = []
         for i in range(nr):
             enemy_rect = self.goose_art.get_rect()
@@ -63,11 +65,29 @@ class Game:
 
     def update(self):
         # Enemy
-        for e in self.enemies:
+        is_swap = False
+        for e in self.enemies: # Move all left/right (and check for player collision)
             x = e.center[0]
             y = e.center[1]
-            x += 1
+            if self.is_enemy_going_right:
+                x += 1
+            else:
+                x -= 1
             e.center = (x, y)
+            # Check if swap needed (boundary)
+            if x < self.goose_art.get_width()/2 or x > self.screen.get_width()-self.goose_art.get_width()/2:
+                is_swap = True
+            # Check for collision
+            if e.colliderect(self.player1_rect):
+                ...
+
+        if is_swap: # Perform a move down and swap direction
+            for e in self.enemies:
+                x = e.center[0]
+                y = e.center[1]
+                y += 1.5*self.goose_art.get_height()
+                e.center = (x, y)
+            self.is_enemy_going_right = not self.is_enemy_going_right
 
         # Player
         self.player1_rect.center = (self.player1_x, self.player1_y)
