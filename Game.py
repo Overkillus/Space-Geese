@@ -70,6 +70,10 @@ class Game:
                     sys.exit(0)
                 if event.key == pygame.K_ESCAPE:
                     sys.exit(0)
+                if event.key == pygame.K_f:
+                    projectile_rect = self.goose_art.get_rect()
+                    projectile_rect.center = (self.player1_rect.center[0], self.player1_rect.center[1] - 60)
+                    self.projectiles.append(projectile_rect)
 
         # Controls
         keys = pygame.key.get_pressed()
@@ -77,9 +81,6 @@ class Game:
             self.player1_x -= 5
         if keys[pygame.K_d] and self.player1_x < self.screen.get_width() - self.player1_rect.width/2:
             self.player1_x += 5
-        if keys[pygame.K_f]:
-            projectile_rect = self.goose_art.get_rect()
-            self.projectiles.append(projectile_rect)
 
     def update(self):
 
@@ -111,6 +112,19 @@ class Game:
                 e.center = (x, y)
             self.is_enemy_going_right = not self.is_enemy_going_right
 
+        for p in self.projectiles:
+            x = p.center[0]
+            y = p.center[1]
+            y -= 3
+            p.center = (x, y)
+            for e in self.enemies:
+                if p.colliderect(e):
+                    self.projectiles.remove(p)
+                    self.enemies.remove(e)
+                    break
+
+
+
     def render(self):
         # Clear screen
         self.screen.fill((0, 0, 0))
@@ -135,4 +149,3 @@ class Game:
 
         # Show new frame
         pygame.display.flip()
-
