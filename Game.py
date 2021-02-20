@@ -2,9 +2,6 @@ import sys
 import pygame
 from pygame import mixer
 
-pygame.init()
-
-
 class Game:
     # Art
     goose_art_1 = pygame.image.load("Art/goose1.png")
@@ -27,6 +24,7 @@ class Game:
     game_over_art = pygame.image.load("Art/bonk.jpg")
 
     def __init__(self):
+        pygame.init()
         # Screen
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         # Background
@@ -36,6 +34,10 @@ class Game:
         self.delta_time = 0
         # Banners
         self.game_over_rect = self.game_over_art.get_rect(center=(self.screen.get_width()/2,self.screen.get_height()/2))
+        # Music
+        mixer.music.load('Sound/goose_sandstorm.mp3')
+        mixer.music.play(-1)
+        mixer.music.set_volume(0.1)
         # Other
         self.is_game_over = False
 
@@ -79,6 +81,12 @@ class Game:
                     sys.exit(0)
                 if event.key == pygame.K_ESCAPE:
                     sys.exit(0)
+                if event.key == pygame.K_EQUALS:
+                    mixer.music.set_volume(mixer.music.get_volume() + 0.01)
+                    print("test")
+                if event.key == pygame.K_MINUS:
+                    print("test")
+                    mixer.music.set_volume(mixer.music.get_volume() - 0.01)
                 if event.key == pygame.K_f:
                     projectile_rect = self.projectile_art.get_rect()
                     projectile_rect.center = (self.player1_rect.center[0], self.player1_rect.center[1] - 60)
