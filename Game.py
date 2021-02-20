@@ -80,7 +80,7 @@ class Game:
                 if event.key == pygame.K_ESCAPE:
                     sys.exit(0)
                 if event.key == pygame.K_f:
-                    projectile_rect = self.goose_art.get_rect()
+                    projectile_rect = self.projectile_art.get_rect()
                     projectile_rect.center = (self.player1_rect.center[0], self.player1_rect.center[1] - 60)
                     self.projectiles.append(projectile_rect)
 
@@ -99,26 +99,28 @@ class Game:
         # Enemy
         is_swap = False
         for e in self.enemies: # Move all left/right (and check for player collision)
-            x = e.center[0]
-            y = e.center[1]
-            if self.is_enemy_going_right:
-                x += 1
-            else:
-                x -= 1
-            e.center = (x, y)
-            # Check if swap needed (boundary)
-            if x < self.goose_art_2.get_width()/2 or x > self.screen.get_width()-self.goose_art_2.get_width()/2:
-                is_swap = True
-            # Check for collision
-            if e.colliderect(self.player1_rect):
-                self.is_game_over = True
+            if e: 
+                x = e.center[0]
+                y = e.center[1]
+                if self.is_enemy_going_right:
+                    x += 1
+                else:
+                    x -= 1
+                e.center = (x, y)
+                # Check if swap needed (boundary)
+                if x < self.goose_art_2.get_width()/2 or x > self.screen.get_width()-self.goose_art_2.get_width()/2:
+                    is_swap = True
+                # Check for collision
+                if e.colliderect(self.player1_rect):
+                    self.is_game_over = True
 
         if is_swap: # Perform a move down and swap direction
             for e in self.enemies:
-                x = e.center[0]
-                y = e.center[1]
-                y += 1.5*self.goose_art_2.get_height()
-                e.center = (x, y)
+                if e:
+                    x = e.center[0]
+                    y = e.center[1]
+                    y += 1.5*self.goose_art_2.get_height()
+                    e.center = (x, y)
             self.is_enemy_going_right = not self.is_enemy_going_right
 
         for p in self.projectiles:
@@ -126,10 +128,10 @@ class Game:
             y = p.center[1]
             y -= 3
             p.center = (x, y)
-            for e in self.enemies:
-                if p.colliderect(e):
+            for i, e in enumerate(self.enemies):
+                if e and p.colliderect(e):
                     self.projectiles.remove(p)
-                    self.enemies.remove(e)
+                    self.enemies[i] = None
                     break
 
 
@@ -143,16 +145,19 @@ class Game:
 
         # Enemy
         for i, e in enumerate(self.enemies):
-            if i % 5 == 0:
-                self.screen.blit(self.goose_art_4, e)
-            elif i % 6 == 0:
-                self.screen.blit(self.goose_art_3, e)
-            elif i % 3 == 0:
-                self.screen.blit(self.goose_art_2, e)
-            else:
-                self.screen.blit(self.goose_art_1, e)
+            if e:
+                if i % 5 == 0:
+                    self.screen.blit(self.goose_art_4, e)
+                elif i % 6 == 0:
+                    self.screen.blit(self.goose_art_3, e)
+                elif i % 3 == 0:
+                    self.screen.blit(self.goose_art_2, e)
+                else:
+                    self.screen.blit(self.goose_art_1, e)
 
-
+        # Projectile
+        for p in self.projectiles:
+            self.screen.blit(self.goose_art_2, p)
         # Player
         self.screen.blit(self.player_art, self.player1_rect)
 
