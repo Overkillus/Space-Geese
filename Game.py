@@ -221,7 +221,8 @@ class Game:
             self.screen.blit(self.game_over_art, self.game_over_rect)
 
         # Poem
-        for i, line in enumerate(self.poem):
+        lines = self.get_lines_to_render()
+        for i, line in enumerate(lines):
             tr = get_text_rect(line, (255,255,255), self.screen.get_width()/2, (self.screen.get_height()-200/3*(3-i)))
             self.screen.blit(tr[0], tr[1])
         # Show new frame
@@ -235,6 +236,20 @@ class Game:
             return [self.all_letters[i][index], [i, index]]
         return self.get_random_letter()
 
+    def get_lines_to_render(self):
+        lines = []
+        for j in range(3):
+            l = []
+            for i, letter in enumerate(self.all_letters[j]):
+                if letter == " " or self.is_letter_revealed[j][i] == True:
+                    l.append(letter)
+                else:
+                    l.append('_')
+            lines.append("".join(l))
+        return lines
+            
+        
+
 
 # Helper Function
 def get_text_rect(text, color, x, y):
@@ -243,5 +258,7 @@ def get_text_rect(text, color, x, y):
     text_rect = text_object.get_rect()
     text_rect.center = (x, y)
     return [text_object, text_rect]
+
+
 
 
