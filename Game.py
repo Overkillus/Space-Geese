@@ -23,12 +23,18 @@ class Game:
     goose_art_4 = pygame.image.load("Art/goose4.png")
     goose_art_4 = pygame.transform.scale(goose_art_4, (x, x))
     projectile_art = pygame.image.load("Art/laser_pink.png")
-    player_art_moving = pygame.image.load("Art/spaceship1.png")
-    player_art_moving = pygame.transform.scale(player_art_moving, (player_art_moving.get_width()//2, player_art_moving.get_height()//2))
-    player_art_stationary = pygame.image.load("Art/spaceship1-no-flame.png")
-    player_art_stationary = pygame.transform.scale(player_art_stationary, (player_art_stationary.get_width()//2, player_art_stationary.get_height()//2))
-    player_art = player_art_stationary
+    # Player1
+    player1_art_moving = pygame.image.load("Art/spaceship1.png")
+    player1_art_moving = pygame.transform.scale(player1_art_moving, (player1_art_moving.get_width() // 2, player1_art_moving.get_height() // 2))
+    player1_art_stationary = pygame.image.load("Art/spaceship1-no-flame.png")
+    player1_art_stationary = pygame.transform.scale(player1_art_stationary, (player1_art_stationary.get_width() // 2, player1_art_stationary.get_height() // 2))
+    player1_art = player1_art_stationary
+    # Player 2
+    player2_art = pygame.image.load("Art/spaceship2.png")
+    player2_art = pygame.transform.scale(player2_art, (player2_art.get_width() // 2, player2_art.get_height() // 2))
+    # BG
     background_art = pygame.image.load("Art/bg.png")
+    start_art = pygame.image.load("Art/space_geese_art2.png")
     game_over_art = pygame.image.load("Art/bonk.jpg")
     win_art = pygame.image.load("Art/meme_win.png")
 
@@ -39,6 +45,7 @@ class Game:
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         # Background
         self.background_art = pygame.transform.scale(self.background_art, (self.screen.get_width(), self.screen.get_height()))
+        self.start_art = pygame.transform.scale(self.start_art, (self.screen.get_width(), self.screen.get_height()))
         # Clock
         self.clock = pygame.time.Clock()
         self.delta_time = 0
@@ -53,14 +60,11 @@ class Game:
         # Other
         self.is_game_over = False
         self.is_win = False
+        self.is_game_started = False
 
         # Enemies
         self.is_enemy_going_right = True
-<<<<<<< HEAD
         nr = 200
-=======
-        nr = 120
->>>>>>> 684c3716652b745d0c6d15ca754d535f8ac019ad
         nr_in_row = 10
         self.enemies = []
         self.projectiles = []
@@ -75,12 +79,12 @@ class Game:
         self.bubbles = []
 
         # Player 1
-        self.player1_rect = self.player_art.get_rect()
+        self.player1_rect = self.player1_art.get_rect()
         self.player1_x = self.screen.get_width() / 2
         self.player1_y = self.screen.get_height() - 250
 
-        # Player 1
-        self.player2_rect = self.player_art.get_rect()
+        # Player 2
+        self.player2_rect = self.player1_art.get_rect()
         self.player2_x = self.screen.get_width() / 2
         self.player2_y = self.screen.get_height() - 250
 
@@ -112,17 +116,20 @@ class Game:
     def event_handler(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit(0)
+                self.close_game()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
-                    sys.exit(0)
+                    self.close_game()
                 if event.key == pygame.K_ESCAPE:
-                    sys.exit(0)
+                    self.close_game()
                 if event.key == pygame.K_EQUALS:
                     mixer.music.set_volume(mixer.music.get_volume() + 0.01)
                 if event.key == pygame.K_MINUS:
                     mixer.music.set_volume(mixer.music.get_volume() - 0.01)
-                if event.key == pygame.K_w:
+                if event.key == pygame.K_s:
+                    self.is_game_started = True
+                if event.key == pygame.K_w and self.is_game_started:
+                    self.client.send_to_server("!p2s")
                     projectile_rect = self.projectile_art.get_rect()
                     projectile_rect.center = (self.player1_rect.center[0], self.player1_rect.center[1] - 60)
                     self.projectiles.append(projectile_rect)
@@ -131,28 +138,41 @@ class Game:
                         for j in range(len(self.is_letter_revealed[i])):
                             self.is_letter_revealed[i][j] = True
                     self.enemies = []
-                if event.key == pygame.K_c:
-                    self.client.send_to_server("testooooloooboogalooo") # TODO temp
 
         # Controls
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_a] and self.player1_x > self.player1_rect.width/2:
-            self.player1_x -= 5
-            self.player_art = self.player_art_moving
-        elif keys[pygame.K_d] and self.player1_x < self.screen.get_width() - self.player1_rect.width/2:
-            self.player1_x += 5
-            self.player_art = self.player_art_moving
-        else:
-            self.player_art = self.player_art_stationary
+        if self.is_game_started:
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_a] and self.player1_x > self.player1_rect.width/2:
+                self.player1_x -= 5
+                self.player1_art = self.player1_art_moving
+            elif keys[pygame.K_d] and self.player1_x < self.screen.get_width() - self.player1_rect.width/2:
+                self.player1_x += 5
+                self.player1_art = self.player1_art_moving
+            else:
+                self.player1_art = self.player1_art_stationary
 
     def update(self):
+        # Send moves to the other player
+        self.client.send_to_server(("!p2x", self.player1_x))
+        # Receive shoot order from p2
+        if self.client.p2s:
+            self.client.p2s = False
+            projectile_rect = self.projectile_art.get_rect()
+            projectile_rect.center = (self.player2_rect.center[0], self.player2_rect.center[1] - 60)
+            self.projectiles.append(projectile_rect)
+
+        # Game
+        if self.client.pop == 2:
+            self.is_game_started = True
+
         # Player
         self.player1_rect.center = (self.player1_x, self.player1_y)
+        self.player2_rect.center = (self.client.p2x, self.player2_y)
 
         # Enemy
         is_swap = False
         for e in self.enemies: # Move all left/right (and check for player collision)
-            if e: 
+            if e and self.is_game_started:
                 x = e.center[0]
                 y = e.center[1]
                 if self.is_enemy_going_right:
@@ -206,7 +226,16 @@ class Game:
                         self.letters.append(text_object_rect)
                         break
             
-
+        # Check again if all revealed
+        all_revealed = True
+        print(self.is_letter_revealed)
+        for l in self.is_letter_revealed:
+            for b in l:
+                if not b:
+                    all_revealed = False
+                    break
+        if all_revealed:
+            self.is_win = True
 
         # Move the letters down
         for l in self.letters:
@@ -243,11 +272,13 @@ class Game:
         for l in self.letters:
             self.screen.blit(l[0], l[1])
         # Player
-        self.screen.blit(self.player_art, self.player1_rect)
+        self.screen.blit(self.player1_art, self.player1_rect)
+        self.screen.blit(self.player2_art, self.player2_rect)
 
         # Banner
         if self.is_game_over:
             self.screen.blit(self.game_over_art, self.game_over_rect)
+
         if self.is_win:
             self.screen.blit(self.win_art, self.win_rect)
 
@@ -256,16 +287,21 @@ class Game:
         for i, line in enumerate(lines):
             tr = get_text_rect(line, (255,255,255), self.screen.get_width()/2, (self.screen.get_height()-200/3*(3-i)))
             self.screen.blit(tr[0], tr[1])
+
+        if not self.is_game_started:
+            self.screen.blit(self.start_art, (0, 0))
+
         # Show new frame
         pygame.display.flip()
 
     def get_random_letter(self):
-        i = random.randint(0,2)
-        # print(i)
-        index = random.randint(0, len(self.all_letters[i])-1)
-        if self.all_letters[i][index] != " " and self.is_letter_revealed[i][index] == False :
-            return [self.all_letters[i][index], [i, index]]
-        return self.get_random_letter()
+        if not self.is_win:
+            i = random.randint(0,2)
+            # print(i)
+            index = random.randint(0, len(self.all_letters[i])-1)
+            if self.all_letters[i][index] != " " and self.is_letter_revealed[i][index] == False :
+                return [self.all_letters[i][index], [i, index]]
+            return self.get_random_letter()
 
     def get_lines_to_render(self):
         lines = []
@@ -279,7 +315,11 @@ class Game:
             lines.append("".join(l))
         return lines
             
-        
+    # Terminate server connection and close application
+    def close_game(self):
+        if self.client.connected:
+            self.client.disconnect()
+        sys.exit(0)
 
 
 # Helper Function

@@ -40,6 +40,26 @@ class Server:
             self.close_connection(connection)
             self.console("message send fail - means connection is dead.")
 
+    def send_to_all_clients(self, msg): # e.g. useful for ticks.
+        for con in self.all_connections:
+            # if connection exists, send. if not, delete it.
+            if con.fileno() == -1:
+                self.all_connections.remove(con)
+            else:
+                if msg != None: # useful just to clean up all_connections
+                    self.send_to_client(con, msg)
+
+    def send_to_all_clients_except(self, msg, client):
+        for con in self.all_connections:
+            if con != client:
+                # if connection exists, send. if not, delete it.
+                if con.fileno() == -1:
+                    self.all_connections.remove(con)
+                else:
+                    if msg != None: # useful just to clean up all_connections
+                        self.send_to_client(con, msg)
+
+
     def close_connection(self, connection):
         connection.close()
         if connection in self.all_connections:
@@ -47,7 +67,12 @@ class Server:
 
     # any other specific messages. overriden by children.
     def handle_client_messages(self, connection, address, msg):
-        pass
+        if msg == "!pop":
+            self.send_to_all_clients(("!pop", (len(self.all_connections)))) # Bounce back the current pop
+        if msg[0] == "!p2x":
+            self.send_to_all_clients_except(("!p2x", msg[1]), connection)
+        if msg == "!p2s":
+            self.send_to_all_clients_except("!p2s", connection)
 
     # handles individual connections
     def handle_client(self, connection, address):
