@@ -53,14 +53,14 @@ class Game:
 
         # Enemies
         self.is_enemy_going_right = True
-        nr = 100
+        nr = 120
         nr_in_row = 10
         self.enemies = []
         self.projectiles = []
         for i in range(nr):
             enemy_rect = self.goose_art_2.get_rect()
             x = (i % nr_in_row) * (1.5 * self.goose_art_2.get_width()) + self.goose_art_2.get_width() / 2
-            y = (i //nr_in_row) * (1.5 * self.goose_art_2.get_height()) + self.goose_art_2.get_height() / 2 - (self.goose_art_2.get_height()*1.5*(nr_in_row-2))
+            y = (i //nr_in_row) * (1.5 * self.goose_art_2.get_height()) + self.goose_art_2.get_height() / 2 - (self.goose_art_2.get_height()*1.5*(nr//nr_in_row-2))
             enemy_rect.center = (x, y)
             self.enemies.append(enemy_rect)
 
