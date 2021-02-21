@@ -5,6 +5,7 @@ from pygame import mixer
 
 import poem_creator
 import random
+from urllib.error import URLError, HTTPError
 
 from Server.Client import Client
 
@@ -91,7 +92,16 @@ class Game:
 
         # Letters
         self.letters = [] # [text_object_ text_rect, letter (char), [nr_line, char_index]]
-        self.poem = poem_creator.get_random_full_poem()
+        self.poem = []
+        while self.poem == []:
+            print("loop")
+            print(self.poem)
+            try:
+                self.poem =  poem_creator.get_random_full_poem()
+            except HTTPError as e:
+                pass
+
+        print(self.poem)
         self.is_letter_revealed = []
         self.all_letters = []
 
@@ -309,7 +319,7 @@ class Game:
         for j in range(3):
             l = []
             for i, letter in enumerate(self.all_letters[j]):
-                if letter == " " or self.is_letter_revealed[j][i] == True:
+                if not letter.isalpha() or self.is_letter_revealed[j][i] == True:
                     l.append(letter)
                 else:
                     l.append('_')

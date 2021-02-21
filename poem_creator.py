@@ -48,7 +48,7 @@ def get_start_sent_adj(adj):
 
     subject = random.choice(plural_people)
     str = subject + " are " + adj
-    print(str)
+    # print(str)
     if estimate_syllables(str) < 5:
         return get_start_sent_adj(adj)
     return str
@@ -89,7 +89,7 @@ def get_random_adj_poem(sents, adjs, nouns):
                 try:
                     line1 = get_start_sent_adj(adjs[i])
                     line2 = sents[i]
-                    print(sents[i])
+                    # print(sents[i])
                     return [line1, line2]
                 except HTTPError as e:
                     print("Error: " + str(e.code))
