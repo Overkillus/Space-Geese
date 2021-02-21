@@ -56,14 +56,18 @@ class Game:
 
         # Enemies
         self.is_enemy_going_right = True
+<<<<<<< HEAD
         nr = 200
+=======
+        nr = 120
+>>>>>>> 684c3716652b745d0c6d15ca754d535f8ac019ad
         nr_in_row = 10
         self.enemies = []
         self.projectiles = []
         for i in range(nr):
             enemy_rect = self.goose_art_2.get_rect()
             x = (i % nr_in_row) * (1.5 * self.goose_art_2.get_width()) + self.goose_art_2.get_width() / 2
-            y = (i //nr_in_row) * (1.5 * self.goose_art_2.get_height()) + self.goose_art_2.get_height() / 2 - (self.goose_art_2.get_height()*1.5*(nr_in_row-2))
+            y = (i //nr_in_row) * (1.5 * self.goose_art_2.get_height()) + self.goose_art_2.get_height() / 2 - (self.goose_art_2.get_height()*1.5*(nr//nr_in_row-2))
             enemy_rect.center = (x, y)
             self.enemies.append(enemy_rect)
 
@@ -127,7 +131,8 @@ class Game:
                         for j in range(len(self.is_letter_revealed[i])):
                             self.is_letter_revealed[i][j] = True
                     self.enemies = []
-
+                if event.key == pygame.K_c:
+                    self.client.send_to_server("testooooloooboogalooo") # TODO temp
 
         # Controls
         keys = pygame.key.get_pressed()

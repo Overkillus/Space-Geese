@@ -18,7 +18,7 @@ class Client:
         self.changing_server = False
         self.sock = None
 
-        # self.start()
+        self.start()
 
     # server - client stuff.
     def send_to_server(self, msg):
