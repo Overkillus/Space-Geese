@@ -110,7 +110,10 @@ class Game:
             l2 = []
             for c in line:
                 l1.append(c)
-                l2.append(False)
+                if c.isalpha():
+                    l2.append(False)
+                else:
+                    l2.append(True)
             self.all_letters.append(l1)
             self.is_letter_revealed.append(l2)
         # print(self.all_letters)
