@@ -1,9 +1,12 @@
 import sys
+import socket
 import pygame
 from pygame import mixer
 
 import poem_generator
 import random
+
+from Server.Client import Client
 
 pygame.init()
 
@@ -29,6 +32,8 @@ class Game:
     game_over_art = pygame.image.load("Art/bonk.jpg")
 
     def __init__(self):
+        # Connection
+        self.client = Client(socket.gethostname(), 2000)
         # Screen
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         # Background
@@ -86,8 +91,8 @@ class Game:
                 l2.append(False)
             self.all_letters.append(l1)
             self.is_letter_revealed.append(l2)
-        print(self.all_letters)
-        print(self.is_letter_revealed)
+        # print(self.all_letters)
+        # print(self.is_letter_revealed)
 
     def tick(self):
         self.delta_time += self.clock.tick() / 1000.0
@@ -108,9 +113,7 @@ class Game:
                     sys.exit(0)
                 if event.key == pygame.K_EQUALS:
                     mixer.music.set_volume(mixer.music.get_volume() + 0.01)
-                    print("test")
                 if event.key == pygame.K_MINUS:
-                    print("test")
                     mixer.music.set_volume(mixer.music.get_volume() - 0.01)
                 if event.key == pygame.K_f:
                     projectile_rect = self.projectile_art.get_rect()
@@ -229,7 +232,7 @@ class Game:
 
     def get_random_letter(self):
         i = random.randint(0,2)
-        print(i)
+        # print(i)
         index = random.randint(0, len(self.all_letters[i])-1)
         if self.all_letters[i][index] != " " and self.is_letter_revealed[i][index] == False :
             return [self.all_letters[i][index], [i, index]]
