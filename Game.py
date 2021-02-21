@@ -39,7 +39,8 @@ class Game:
 
     def __init__(self):
         # Connection
-        self.client = Client(socket.gethostname(), 2000)
+        # self.client = Client(socket.gethostname(), 2000)
+        self.client = Client("139.162.219.137", 2000) # Server ip
         # Screen
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         # Background
@@ -54,7 +55,7 @@ class Game:
         # mixer.music.load('Sound/goose_sandstorm.mp3')
         mixer.music.load('Sound/goose_sandstorm2.wav')
         mixer.music.play(-1)
-        mixer.music.set_volume(0.08)
+        mixer.music.set_volume(0.04)
         # Other
         self.is_game_over = False
         self.is_game_started = False
