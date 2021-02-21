@@ -3,7 +3,7 @@ import socket
 import pygame
 from pygame import mixer
 
-import poem_generator
+import poem_creator
 import random
 
 from Server.Client import Client
@@ -91,7 +91,7 @@ class Game:
 
         # Letters
         self.letters = [] # [text_object_ text_rect, letter (char), [nr_line, char_index]]
-        self.poem = poem_generator.get_poem()
+        self.poem = poem_creator.get_random_full_poem()
         self.is_letter_revealed = []
         self.all_letters = []
 
