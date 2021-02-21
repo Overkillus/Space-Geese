@@ -34,7 +34,7 @@ class Game:
     def __init__(self):
         # Connection
         self.client = Client(socket.gethostname(), 2000)
-        # Screen
+        # Screens
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         # Background
         self.background_art = pygame.transform.scale(self.background_art, (self.screen.get_width(), self.screen.get_height()))
@@ -119,6 +119,8 @@ class Game:
                     projectile_rect = self.projectile_art.get_rect()
                     projectile_rect.center = (self.player1_rect.center[0], self.player1_rect.center[1] - 60)
                     self.projectiles.append(projectile_rect)
+                if event.key == pygame.K_c:
+                    self.client.send_to_server("testooooloooboogalooo") # TODO temp
 
         # Controls
         keys = pygame.key.get_pressed()

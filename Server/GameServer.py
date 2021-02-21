@@ -13,6 +13,7 @@ class GameServer(Server):
         super().__init__(server, port) # this runs start(), which halts anything below.
 
     def handle_client_messages(self, connection, address, msg):
+        print(msg)
         pass
 
     def close_server(self):

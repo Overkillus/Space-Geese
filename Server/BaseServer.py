@@ -91,6 +91,6 @@ class Server:
             thread = threading.Thread(target=self.handle_client
                                       , args=(connection, address))
             thread.start()
-            #self.send_to_all_clients(None) # clean-up all_connections
+
 
 s = Server(socket.gethostname(), 2000)
