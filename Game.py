@@ -30,6 +30,7 @@ class Game:
     player_art = player_art_stationary
     background_art = pygame.image.load("Art/bg.png")
     game_over_art = pygame.image.load("Art/bonk.jpg")
+    win_art = pygame.image.load("Art/meme_win.png")
 
     def __init__(self):
         # Connection
@@ -43,6 +44,7 @@ class Game:
         self.delta_time = 0
         # Banners
         self.game_over_rect = self.game_over_art.get_rect(center=(self.screen.get_width()/2,self.screen.get_height()/2))
+        self.win_rect = self.win_art.get_rect(center=(self.screen.get_width()/2,self.screen.get_height()/2-100))
         # Music
         # mixer.music.load('Sound/goose_sandstorm.mp3')
         mixer.music.load('Sound/goose_sandstorm2.wav')
@@ -50,10 +52,11 @@ class Game:
         mixer.music.set_volume(0.08)
         # Other
         self.is_game_over = False
+        self.is_win = False
 
         # Enemies
         self.is_enemy_going_right = True
-        nr = 100
+        nr = 200
         nr_in_row = 10
         self.enemies = []
         self.projectiles = []
@@ -182,17 +185,23 @@ class Game:
 
                     # spawn letter on hit
                     all_revealed = True
-                    for b in self.is_letter_revealed:
-                        if not b:
-                            all_revealed = False
-                            break
+                    print(self.is_letter_revealed)
+                    for l in self.is_letter_revealed:
+                        for b in l:
+                            if not b:
+                                all_revealed = False
+                                break
                     if all_revealed:
+                        self.is_win = True
+                    else:
                         random_letter = self.get_random_letter()
                         text_object_rect = get_text_rect(random_letter[0], (255,0,0), e.center[0], e.center[1])
                         text_object_rect.append(random_letter[0])
                         text_object_rect.append(random_letter[1])
                         self.letters.append(text_object_rect)
                         break
+            
+
 
         # Move the letters down
         for l in self.letters:
@@ -234,6 +243,8 @@ class Game:
         # Banner
         if self.is_game_over:
             self.screen.blit(self.game_over_art, self.game_over_rect)
+        if self.is_win:
+            self.screen.blit(self.win_art, self.win_rect)
 
         # Poem
         lines = self.get_lines_to_render()
