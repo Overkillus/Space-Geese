@@ -110,4 +110,4 @@ def get_random_full_poem():
     
 #######
 
-print(get_random_full_poem())
+# print(get_random_full_poem())
