@@ -115,10 +115,16 @@ class Game:
                     mixer.music.set_volume(mixer.music.get_volume() + 0.01)
                 if event.key == pygame.K_MINUS:
                     mixer.music.set_volume(mixer.music.get_volume() - 0.01)
-                if event.key == pygame.K_f:
+                if event.key == pygame.K_w:
                     projectile_rect = self.projectile_art.get_rect()
                     projectile_rect.center = (self.player1_rect.center[0], self.player1_rect.center[1] - 60)
                     self.projectiles.append(projectile_rect)
+                if event.key == pygame.K_x:
+                    for i in range(len(self.is_letter_revealed)):
+                        for j in range(len(self.is_letter_revealed[i])):
+                            self.is_letter_revealed[i][j] = True
+                    self.enemies = []
+
 
         # Controls
         keys = pygame.key.get_pressed()
