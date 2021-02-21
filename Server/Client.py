@@ -12,11 +12,16 @@ class Client:
         self.HEADER_SIZE = 10
         self.FORMAT = "utf-8"
         self.DISCONNECT_MSG = "!GETOUT"
+        self.POPULATION_MSG = "!POP"
 
         self.IN_GAME = False
         self.connected = False
         self.changing_server = False
         self.sock = None
+
+        self.pop = 1
+        self.p2x = 400
+        self.p2s = False
 
         self.start()
 
@@ -62,11 +67,21 @@ class Client:
     def handle_server_messages(self, msg):
         if "[SERVER" in msg:  # ignore reposts.
             return
+        elif "!pop" in msg:
+            print("olaboga")
+            self.pop = msg[1]
+        elif "!p2x" in msg:
+            self.p2x = msg[1]
+        elif "!p2s" in msg:
+            print("tet")
+            self.p2s = True
 
     def start(self):
         self.IN_GAME = False
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.connect((self.SERVER, self.PORT))
         thread = threading.Thread(target=self.expect_message)
         thread.start()
         time.sleep(0.01)
+        self.send_to_server("!pop")
         # tell server u have arrived?
